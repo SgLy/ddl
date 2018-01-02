@@ -7,6 +7,7 @@ CREATE TABLE deadline (
     id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(128) NOT NULL,
     time DATETIME NOT NULL,
+    done BOOL NOT NULL DEFAULT false,
     description TEXT NOT NULL,
     course_id INT,
     user_id INT
