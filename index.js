@@ -277,6 +277,60 @@ app.post('/api/chat/:id', (req, res) => {
     });
 });
 
+/* COURSE */
+app.get('/api/course', (req, res) => {
+    console.log('GET /api/course', req.body);
+    const q = 'SELECT * FROM course';
+    const data = [];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        res.json({
+            courses: result.map(r => ({
+                id: r.id,
+                name: r.name,
+                semester: r.semester
+            }))
+        });
+    });
+});
+app.post('/api/course', (req, res) => {
+    console.log('POST /api/course', req.body);
+    const q = 'INSERT INTO course (name, semester) VALUES (?, ?)';
+    const data = [req.body.name, req.body.semester];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                id: result.insertId
+            });
+        } else
+            GG(res, 'Error');
+    });
+});
+app.post('/api/course/:cid/user/:uid', (req, res) => {
+    console.log('POST /api/course/user', req.params.cid, req.params.uid, req.body);
+    const q = 'INSERT INTO user_course (user_id, course_id) VALUES (?, ?)';
+    const data = [req.params.uid, req.params.cid];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                id: result.insertId
+            });
+        } else
+            GG(res, 'Error');
+    });
+});
+
 /* USER */
 app.put('/api/user', (req, res) => {
     console.log('POST /api/user', req.body);
