@@ -5,7 +5,7 @@ CREATE USER IF NOT EXISTS 'ddl'@'localhost' IDENTIFIED BY 'ddl';
 GRANT ALL PRIVILEGES ON ddl.* TO 'ddl'@'localhost';
 CREATE TABLE deadline (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(1024) NOT NULL,
+    title VARCHAR(128) NOT NULL,
     time DATETIME NOT NULL,
     description TEXT NOT NULL,
     course_id INT,
@@ -13,7 +13,7 @@ CREATE TABLE deadline (
 );
 CREATE TABLE notice (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(1024) NOT NULL,
+    title VARCHAR(128) NOT NULL,
     description TEXT NOT NULL,
     course_id INT,
     user_id INT
@@ -27,14 +27,15 @@ CREATE TABLE chat (
 );
 CREATE TABLE course (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(1024) NOT NULL,
+    name VARCHAR(128) NOT NULL,
     admin_id INT NOT NULL
 );
 CREATE TABLE user (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(128) NOT NULL UNIQUE,
     password VARCHAR(32) NOT NULL,
-    nickname VARCHAR(1024) NOT NULL
+    nickname VARCHAR(128) NOT NULL,
+    token VARCHAR(36) UNIQUE
 );
 CREATE TABLE user_course (
     user_id INT NOT NULL,
