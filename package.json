@@ -1,0 +1,22 @@
+{
+  "name": "ddl-backend",
+  "version": "1.0.0",
+  "description": "backend of DDL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgly/ddl-backend.git"
+  },
+  "author": "SgLy",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sgly/ddl-backend/issues"
+  },
+  "homepage": "https://github.com/sgly/ddl-backend#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
