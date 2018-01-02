@@ -1,3 +1,4 @@
+/* Express.js */
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -5,6 +6,7 @@ app.use(express.urlencoded({
     extended: true
 }));
 
+/* MySQL */
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -13,6 +15,9 @@ const connection = mysql.createConnection({
     database: 'ddl'
 });
 connection.connect();
+
+/* UUID */
+const uuid = require('uuid/v1');
 
 function GG(res, err) {
     res.json({
@@ -37,6 +42,28 @@ app.put('/api/user', (req, res) => {
                 id: rows[0].id
             });
         });
+    });
+});
+app.get('/api/login', (req, res) => {
+    console.log('GET /api/login', req.body);
+    const q = 'SELECT * FROM user WHERE username = ? AND password = ?';
+    const data = [req.body.username, req.body.password];
+    connection.query(q, data, (err, rows) => {
+        if (err) GG(res, err);
+        if (rows.length > 0) {
+            const token = uuid();
+            console.log(token);
+            const q = 'UPDATE user SET token = ? WHERE id = ?';
+            const data = [token, rows[0].id];
+            connection.query(q, data, (err, rows) => {
+                if (err) GG(res, err);
+                res.json({
+                    status: 1,
+                    reason: 'Success',
+                    token: token
+                });
+            });
+        }
     });
 });
 
