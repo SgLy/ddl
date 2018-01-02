@@ -39,7 +39,7 @@ app.get('/api/deadline', (req, res) => {
     console.log('GET /api/deadline', req.body);
 
     const q = `
-        SELECT * FROM deadline
+        SELECT deadline.* FROM deadline
         LEFT JOIN user_course ON deadline.course_id = user_course.course_id
         LEFT JOIN user ON deadline.user_id = user.id OR user_course.user_id = user.id
         WHERE user.token = ?
@@ -84,13 +84,51 @@ app.post('/api/deadline', (req, res) => {
         } else GG(res, 'Token error');
     });
 });
+app.put('/api/deadline/:id', (req, res) => {
+    console.log('PUT /api/deadline/', req.params.id, req.body);
+    const q = `UPDATE deadline SET done = TRUE WHERE id = ?
+        AND user_id = (SELECT id FROM user WHERE token = ?)`;
+    const data = [req.params.id, req.body.token];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                status: 1,
+                reason: 'Success'
+            });
+        } else
+            GG(res, 'Token or id error');
+    });
+});
+app.delete('/api/deadline/:id', (req, res) => {
+    console.log('DELETE /api/deadline/', req.params.id, req.body);
+    const q = `DELETE FROM deadline WHERE id = ?
+        AND user_id = (SELECT id FROM user WHERE token = ?)`;
+    const data = [req.params.id, req.body.token];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                status: 1,
+                reason: 'Success'
+            });
+        } else
+            GG(res, 'Token or id error');
+    });
+});
 
 /* NOTICE */
 app.get('/api/notice', (req, res) => {
     console.log('GET /api/notice', req.body);
 
     const q = `
-        SELECT * FROM notice
+        SELECT notice.* FROM notice
         LEFT JOIN user_course ON notice.course_id = user_course.course_id
         LEFT JOIN user ON notice.user_id = user.id OR user_course.user_id = user.id
         WHERE user.token = ?
@@ -131,6 +169,25 @@ app.post('/api/notice', (req, res) => {
                 id: result.insertId
             });
         } else GG(res, 'Token error');
+    });
+});
+app.delete('/api/notice/:id', (req, res) => {
+    console.log('DELETE /api/notice/', req.params.id, req.body);
+    const q = `DELETE FROM notice WHERE id = ?
+        AND user_id = (SELECT id FROM user WHERE token = ?)`;
+    const data = [req.params.id, req.body.token];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                status: 1,
+                reason: 'Success'
+            });
+        } else
+            GG(res, 'Token or id error');
     });
 });
 
