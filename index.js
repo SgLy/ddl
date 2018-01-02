@@ -1,7 +1,5 @@
 'use strict';
 
-/* eslint-disable no-console */
-
 /* Express.js */
 const express = require('express');
 const app = express();
