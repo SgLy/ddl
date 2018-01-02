@@ -32,7 +32,7 @@ CREATE TABLE course (
 );
 CREATE TABLE user (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(1024) NOT NULL,
+    username VARCHAR(128) NOT NULL UNIQUE,
     password VARCHAR(32) NOT NULL,
     nickname VARCHAR(1024) NOT NULL
 );
