@@ -45,7 +45,7 @@ function responseError(res, err) {
 
 /* DEADLINE */
 app.get('/api/deadline', (req, res) => {
-    console.log('GET /api/deadline', req.body);
+    console.log('GET /api/deadline', req.query);
 
     const q = `
         SELECT deadline.* FROM deadline
@@ -53,7 +53,7 @@ app.get('/api/deadline', (req, res) => {
         LEFT JOIN user ON deadline.user_id = user.id OR user_course.user_id = user.id
         WHERE user.token = ?
     `;
-    const data = [req.body.token];
+    const data = [req.query.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -134,7 +134,7 @@ app.delete('/api/deadline/:id', (req, res) => {
 
 /* NOTICE */
 app.get('/api/notice', (req, res) => {
-    console.log('GET /api/notice', req.body);
+    console.log('GET /api/notice', req.query);
 
     const q = `
         SELECT notice.* FROM notice
@@ -142,7 +142,7 @@ app.get('/api/notice', (req, res) => {
         LEFT JOIN user ON notice.user_id = user.id OR user_course.user_id = user.id
         WHERE user.token = ?
     `;
-    const data = [req.body.token];
+    const data = [req.query.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -202,7 +202,7 @@ app.delete('/api/notice/:id', (req, res) => {
 
 /* CHATS */
 app.get('/api/chats', (req, res) => {
-    console.log('GET /api/chats', req.body);
+    console.log('GET /api/chats', req.query);
     const q = `
         SELECT course.id, chat.content, user.nickname, course.name from chat
         LEFT JOIN course ON chat.course_id = course.id
@@ -211,7 +211,7 @@ app.get('/api/chats', (req, res) => {
         WHERE user_course.user_id = (SELECT id FROM user WHERE token = ?)
         GROUP BY chat.course_id ORDER BY time DESC
     `;
-    const data = [req.body.token];
+    const data = [req.query.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -230,7 +230,7 @@ app.get('/api/chats', (req, res) => {
     });
 });
 app.get('/api/chat/:id', (req, res) => {
-    console.log('GET /api/chat/', req.params.id, req.body);
+    console.log('GET /api/chat/', req.params.id, req.query);
     const q = `
         SELECT chat.*, user.token, user.nickname from chat
         LEFT JOIN user ON chat.user_id = user.id
@@ -239,7 +239,7 @@ app.get('/api/chat/:id', (req, res) => {
             AND user_course.user_id = (SELECT id FROM user WHERE token = ?)
         ORDER BY time ASC
     `;
-    const data = [req.params.id, req.body.last_message_id, req.body.token];
+    const data = [req.params.id, req.query.last_message_id, req.query.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -323,9 +323,9 @@ app.post('/api/user', (req, res) => {
     });
 });
 app.get('/api/user', (req, res) => {
-    console.log('GET /api/user', req.body);
+    console.log('GET /api/user', req.query);
     const q = 'SELECT * FROM user WHERE token = ?';
-    const data = [req.body.token];
+    const data = [req.query.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -342,11 +342,11 @@ app.get('/api/user', (req, res) => {
     });
 });
 app.get('/api/login', (req, res) => {
-    console.log('GET /api/login', req.body);
+    console.log('GET /api/login', req.query);
     const token = uuid();
     console.log(`Generate UUID: ${token}`);
     const q = 'UPDATE user SET token = ? WHERE username = ? AND password = ?';
-    const data = [token, req.body.username, req.body.password];
+    const data = [token, req.query.username, req.query.password];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
