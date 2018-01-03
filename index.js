@@ -30,7 +30,7 @@ connection.connect();
 /* UUID */
 const uuid = require('uuid/v1');
 
-function GG(res, err) {
+function responseError(res, err) {
     let msg;
     if (err.sqlMessage !== undefined) {
         console.log(err.sqlMessage);
@@ -56,7 +56,7 @@ app.get('/api/deadline', (req, res) => {
     const data = [req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -81,7 +81,7 @@ app.post('/api/deadline', (req, res) => {
     const data = [req.body.title, req.body.description, req.body.time, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -90,7 +90,7 @@ app.post('/api/deadline', (req, res) => {
                 reason: 'Success',
                 id: result.insertId
             });
-        } else GG(res, 'Token error');
+        } else responseError(res, 'Token error');
     });
 });
 app.put('/api/deadline/:id', (req, res) => {
@@ -100,7 +100,7 @@ app.put('/api/deadline/:id', (req, res) => {
     const data = [req.params.id, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -109,7 +109,7 @@ app.put('/api/deadline/:id', (req, res) => {
                 reason: 'Success'
             });
         } else
-            GG(res, 'Token or id error');
+            responseError(res, 'Token or id error');
     });
 });
 app.delete('/api/deadline/:id', (req, res) => {
@@ -119,7 +119,7 @@ app.delete('/api/deadline/:id', (req, res) => {
     const data = [req.params.id, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -128,7 +128,7 @@ app.delete('/api/deadline/:id', (req, res) => {
                 reason: 'Success'
             });
         } else
-            GG(res, 'Token or id error');
+            responseError(res, 'Token or id error');
     });
 });
 
@@ -145,7 +145,7 @@ app.get('/api/notice', (req, res) => {
     const data = [req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -168,7 +168,7 @@ app.post('/api/notice', (req, res) => {
     const data = [req.body.title, req.body.description, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -177,7 +177,7 @@ app.post('/api/notice', (req, res) => {
                 reason: 'Success',
                 id: result.insertId
             });
-        } else GG(res, 'Token error');
+        } else responseError(res, 'Token error');
     });
 });
 app.delete('/api/notice/:id', (req, res) => {
@@ -187,7 +187,7 @@ app.delete('/api/notice/:id', (req, res) => {
     const data = [req.params.id, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -196,7 +196,7 @@ app.delete('/api/notice/:id', (req, res) => {
                 reason: 'Success'
             });
         } else
-            GG(res, 'Token or id error');
+            responseError(res, 'Token or id error');
     });
 });
 
@@ -214,7 +214,7 @@ app.get('/api/chats', (req, res) => {
     const data = [req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -242,7 +242,7 @@ app.get('/api/chat/:id', (req, res) => {
     const data = [req.params.id, req.body.last_message_id, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -271,7 +271,7 @@ app.post('/api/chat/:id', (req, res) => {
     const data = [req.params.id, req.params.id, req.body.token, req.body.content];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -282,7 +282,7 @@ app.post('/api/chat/:id', (req, res) => {
                 id: result.insertId
             });
         } else
-            GG(res, 'Token or course id error');
+            responseError(res, 'Token or course id error');
     });
 });
 
@@ -293,7 +293,7 @@ app.put('/api/user', (req, res) => {
     const data = [req.body.username, req.body.password, req.body.nickname];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -311,7 +311,7 @@ app.post('/api/user', (req, res) => {
     const data = [req.body.password, req.body.nickname, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows > 0) {
@@ -319,7 +319,7 @@ app.post('/api/user', (req, res) => {
                 status: 1,
                 reason: 'Success'
             });
-        } else GG(res, 'Token error');
+        } else responseError(res, 'Token error');
     });
 });
 app.get('/api/user', (req, res) => {
@@ -328,7 +328,7 @@ app.get('/api/user', (req, res) => {
     const data = [req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.length > 0) {
@@ -338,7 +338,7 @@ app.get('/api/user', (req, res) => {
                 username: result[0].username,
                 nickname: result[0].nickname
             });
-        } else GG(res, 'Token error');
+        } else responseError(res, 'Token error');
     });
 });
 app.get('/api/login', (req, res) => {
@@ -349,7 +349,7 @@ app.get('/api/login', (req, res) => {
     const data = [token, req.body.username, req.body.password];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows > 0) {
@@ -358,19 +358,23 @@ app.get('/api/login', (req, res) => {
                 reason: 'Success',
                 token: token
             });
-        } else GG(res, 'Username or password error');
+        } else responseError(res, 'Username or password error');
     });
 });
 
 /* ADMIN */
 /* COURSE */
 app.get('/api/admin/course', (req, res) => {
-    console.log('GET /api/admin/course', req.body);
+    console.log('GET /api/admin/course', req.query);
+    if (req.query.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     const q = 'SELECT * FROM course';
     const data = [];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -384,11 +388,15 @@ app.get('/api/admin/course', (req, res) => {
 });
 app.post('/api/admin/course', (req, res) => {
     console.log('POST /api/admin/course', req.body);
+    if (req.body.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     const q = 'INSERT INTO course (name, semester) VALUES (?, ?)';
     const data = [req.body.name, req.body.semester];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -396,16 +404,20 @@ app.post('/api/admin/course', (req, res) => {
                 id: result.insertId
             });
         } else
-            GG(res, 'Error');
+            responseError(res, 'Error');
     });
 });
 app.get('/api/admin/course/user', (req, res) => {
     console.log('POST /api/admin/course/user');
+    if (req.query.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     const q = 'SELECT * FROM user_course';
     const data = [];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -418,11 +430,15 @@ app.get('/api/admin/course/user', (req, res) => {
 });
 app.post('/api/admin/course/:cid/user/:uid', (req, res) => {
     console.log('POST /api/admin/course/user', req.params.cid, req.params.uid, req.body);
+    if (req.body.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     const q = 'INSERT INTO user_course (user_id, course_id) VALUES (?, ?)';
     const data = [req.params.uid, req.params.cid];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -430,17 +446,21 @@ app.post('/api/admin/course/:cid/user/:uid', (req, res) => {
                 id: result.insertId
             });
         } else
-            GG(res, 'Error');
+            responseError(res, 'Error');
     });
 });
 /* Admin get all apis */
 app.get('/api/admin/user', (req, res) => {
     console.log('GET /api/admin/user');
+    if (req.query.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     let q = 'SELECT * FROM user';
     let data = [];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -455,11 +475,15 @@ app.get('/api/admin/user', (req, res) => {
 });
 app.get('/api/admin/deadline', (req, res) => {
     console.log('GET /api/admin/deadline');
+    if (req.query.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     let q = 'SELECT * FROM deadline';
     let data = [];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -477,6 +501,10 @@ app.get('/api/admin/deadline', (req, res) => {
 });
 app.post('/api/admin/deadline', (req, res) => {
     console.log('POST /api/admin/deadline', req.body);
+    if (req.body.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     const q = `
         INSERT INTO deadline (title, description, time, course_id, user_id)
         VALUE (?, ?, ?, ?, NULL);
@@ -484,7 +512,7 @@ app.post('/api/admin/deadline', (req, res) => {
     const data = [req.body.title, req.body.description, req.body.time, req.body.course_id];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -493,16 +521,20 @@ app.post('/api/admin/deadline', (req, res) => {
                 reason: 'Success',
                 id: result.insertId
             });
-        } else GG(res, 'Token error');
+        } else responseError(res, 'Token error');
     });
 });
 app.get('/api/admin/notice', (req, res) => {
     console.log('GET /api/admin/notice');
+    if (req.query.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     let q = 'SELECT * FROM notice';
     let data = [];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         res.json({
@@ -518,6 +550,10 @@ app.get('/api/admin/notice', (req, res) => {
 });
 app.post('/api/admin/notice', (req, res) => {
     console.log('POST /api/admin/notice', req.body);
+    if (req.body.admin_token !== admin_token) {
+        res.json({ status: -1, reason: 'Admin required' });
+        return;
+    }
     const q = `
         INSERT INTO notice (title, description, course_id, user_id)
         VALUE (?, ?, ?, NULL);
@@ -525,7 +561,7 @@ app.post('/api/admin/notice', (req, res) => {
     const data = [req.body.title, req.body.description, req.body.course_id];
     connection.query(q, data, (err, result) => {
         if (err) {
-            GG(res, err);
+            responseError(res, err);
             return;
         }
         if (result.affectedRows === 1) {
@@ -534,7 +570,7 @@ app.post('/api/admin/notice', (req, res) => {
                 reason: 'Success',
                 id: result.insertId
             });
-        } else GG(res, 'Token error');
+        } else responseError(res, 'Token error');
     });
 });
 
@@ -543,8 +579,9 @@ app.get('/', (req, res) => {
     res.send('DDL backend working.');
 });
 
+let admin_token = uuid();
 app.get('/admin', (req, res) => {
-    res.render('admin', {});
+    res.render('admin', { admin_token });
 });
 
 app.listen(5000, () => {

@@ -3,7 +3,7 @@ let baseUrl = 'http://localhost:5000';
 $('.ui.tabular.menu .item').tab();
 
 function loadUser() {
-    $.get('/api/admin/user', (data) => {
+    $.get('/api/admin/user', { admin_token }, (data) => {
         let el = '';
         data.users.forEach(d => {
             el += `<tr><td>${d.id}</td><td>${d.username}</td><td>${d.nickname}</td><td>${d.password}</td><td></td></tr>`;
@@ -14,6 +14,7 @@ function loadUser() {
 $('#user').on('click', loadUser);
 $('#add_user').on('click', () => {
     const data = {
+        admin_token,
         username: $('#user_username').val(),
         nickname: $('#user_nickname').val(),
         password: $('#user_password').val()
@@ -27,7 +28,7 @@ $('#add_user').on('click', () => {
 });
 
 function loadDeadline() {
-    $.get('/api/admin/deadline', (data) => {
+    $.get('/api/admin/deadline', { admin_token }, (data) => {
         let el = '';
         data.deadlines.forEach(d => {
             el += `<tr>
@@ -47,6 +48,7 @@ function loadDeadline() {
 $('#deadline').on('click', loadDeadline);
 $('#add_deadline').on('click', () => {
     const data = {
+        admin_token,
         title: $('#deadline_title').val(),
         description: $('#deadline_description').val(),
         time: $('#deadline_time').val(),
@@ -56,7 +58,7 @@ $('#add_deadline').on('click', () => {
 });
 
 function loadNotice() {
-    $.get('/api/admin/notice', (data) => {
+    $.get('/api/admin/notice', { admin_token }, (data) => {
         let el = '';
         data.notices.forEach(d => {
             el += `<tr>
@@ -74,6 +76,7 @@ function loadNotice() {
 $('#notice').on('click', loadNotice);
 $('#add_notice').on('click', () => {
     const data = {
+        admin_token,
         title: $('#notice_title').val(),
         description: $('#notice_description').val(),
         course_id: $('#notice_course_id').val()
@@ -82,7 +85,7 @@ $('#add_notice').on('click', () => {
 });
 
 function loadCourse() {
-    $.get('/api/admin/course', (data) => {
+    $.get('/api/admin/course', { admin_token }, (data) => {
         let el = '';
         data.courses.forEach(d => {
             el += `<tr><td>${d.id}</td><td>${d.name}</td><td>${d.semester}</td><td></td></tr>`;
@@ -93,6 +96,7 @@ function loadCourse() {
 $('#course').on('click', loadCourse);
 $('#add_course').on('click', () => {
     const data = {
+        admin_token,
         name: $('#course_name').val(),
         semester: $('#course_semester').val()
     };
@@ -100,7 +104,7 @@ $('#add_course').on('click', () => {
 });
 
 function loadUserCourse() {
-    $.get('/api/admin/course/user', (data) => {
+    $.get('/api/admin/course/user', { admin_token }, (data) => {
         let el = '';
         data.user_courses.forEach(d => {
             el += `<tr>
@@ -116,7 +120,7 @@ $('#user_course').on('click', loadUserCourse);
 $('#add_user_course').on('click', () => {
     const user_id = $('#user_course_user_id').val();
     const course_id = $('#user_course_course_id').val();
-    $.post(`/api/admin/course/${course_id}/user/${user_id}`, loadUserCourse);
+    $.post(`/api/admin/course/${course_id}/user/${user_id}`, { admin_token }, loadUserCourse);
 });
 
 $(loadCourse);
