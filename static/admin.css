@@ -1,0 +1,6 @@
+.ui.main.container {
+    margin-top: 7em;
+}
+.ui.tabular.menu .item {
+    cursor: pointer;
+}

@@ -7,6 +7,15 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
+app.use(express.static('static'));
+
+/* Nunjucks */
+const expressNunjucks = require('express-nunjucks');
+app.set('views', __dirname + '/templates');
+expressNunjucks(app, {
+    watch: true,
+    noCache: true
+});
 
 /* MySQL */
 const mysql = require('mysql');
@@ -277,60 +286,6 @@ app.post('/api/chat/:id', (req, res) => {
     });
 });
 
-/* COURSE */
-app.get('/api/course', (req, res) => {
-    console.log('GET /api/course', req.body);
-    const q = 'SELECT * FROM course';
-    const data = [];
-    connection.query(q, data, (err, result) => {
-        if (err) {
-            GG(res, err);
-            return;
-        }
-        res.json({
-            courses: result.map(r => ({
-                id: r.id,
-                name: r.name,
-                semester: r.semester
-            }))
-        });
-    });
-});
-app.post('/api/course', (req, res) => {
-    console.log('POST /api/course', req.body);
-    const q = 'INSERT INTO course (name, semester) VALUES (?, ?)';
-    const data = [req.body.name, req.body.semester];
-    connection.query(q, data, (err, result) => {
-        if (err) {
-            GG(res, err);
-            return;
-        }
-        if (result.affectedRows === 1) {
-            res.json({
-                id: result.insertId
-            });
-        } else
-            GG(res, 'Error');
-    });
-});
-app.post('/api/course/:cid/user/:uid', (req, res) => {
-    console.log('POST /api/course/user', req.params.cid, req.params.uid, req.body);
-    const q = 'INSERT INTO user_course (user_id, course_id) VALUES (?, ?)';
-    const data = [req.params.uid, req.params.cid];
-    connection.query(q, data, (err, result) => {
-        if (err) {
-            GG(res, err);
-            return;
-        }
-        if (result.affectedRows === 1) {
-            res.json({
-                id: result.insertId
-            });
-        } else
-            GG(res, 'Error');
-    });
-});
-
 /* USER */
 app.put('/api/user', (req, res) => {
     console.log('POST /api/user', req.body);
@@ -407,9 +362,189 @@ app.get('/api/login', (req, res) => {
     });
 });
 
+/* ADMIN */
+/* COURSE */
+app.get('/api/admin/course', (req, res) => {
+    console.log('GET /api/admin/course', req.body);
+    const q = 'SELECT * FROM course';
+    const data = [];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        res.json({
+            courses: result.map(r => ({
+                id: r.id,
+                name: r.name,
+                semester: r.semester
+            }))
+        });
+    });
+});
+app.post('/api/admin/course', (req, res) => {
+    console.log('POST /api/admin/course', req.body);
+    const q = 'INSERT INTO course (name, semester) VALUES (?, ?)';
+    const data = [req.body.name, req.body.semester];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                id: result.insertId
+            });
+        } else
+            GG(res, 'Error');
+    });
+});
+app.get('/api/admin/course/user', (req, res) => {
+    console.log('POST /api/admin/course/user');
+    const q = 'SELECT * FROM user_course';
+    const data = [];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        res.json({
+            user_courses: result.map(r => ({
+                user_id: r.user_id,
+                course_id: r.course_id
+            }))
+        });
+    });
+});
+app.post('/api/admin/course/:cid/user/:uid', (req, res) => {
+    console.log('POST /api/admin/course/user', req.params.cid, req.params.uid, req.body);
+    const q = 'INSERT INTO user_course (user_id, course_id) VALUES (?, ?)';
+    const data = [req.params.uid, req.params.cid];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                id: result.insertId
+            });
+        } else
+            GG(res, 'Error');
+    });
+});
+/* Admin get all apis */
+app.get('/api/admin/user', (req, res) => {
+    console.log('GET /api/admin/user');
+    let q = 'SELECT * FROM user';
+    let data = [];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        res.json({
+            users: result.map(r => ({
+                id: r.id,
+                username: r.username,
+                password: r.password,
+                nickname: r.nickname
+            }))
+        });
+    });
+});
+app.get('/api/admin/deadline', (req, res) => {
+    console.log('GET /api/admin/deadline');
+    let q = 'SELECT * FROM deadline';
+    let data = [];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        res.json({
+            deadlines: result.map(r => ({
+                id: r.id,
+                title: r.title,
+                description: r.description,
+                time: r.time,
+                done: r.done === 1,
+                course_id: r.course_id,
+                user_id: r.user_id
+            }))
+        });
+    });
+});
+app.post('/api/admin/deadline', (req, res) => {
+    console.log('POST /api/admin/deadline', req.body);
+    const q = `
+        INSERT INTO deadline (title, description, time, course_id, user_id)
+        VALUE (?, ?, ?, ?, NULL);
+    `;
+    const data = [req.body.title, req.body.description, req.body.time, req.body.course_id];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                status: 1,
+                reason: 'Success',
+                id: result.insertId
+            });
+        } else GG(res, 'Token error');
+    });
+});
+app.get('/api/admin/notice', (req, res) => {
+    console.log('GET /api/admin/notice');
+    let q = 'SELECT * FROM notice';
+    let data = [];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        res.json({
+            notices: result.map(r => ({
+                id: r.id,
+                title: r.title,
+                description: r.description,
+                course_id: r.course_id,
+                user_id: r.user_id
+            }))
+        });
+    });
+});
+app.post('/api/admin/notice', (req, res) => {
+    console.log('POST /api/admin/notice', req.body);
+    const q = `
+        INSERT INTO notice (title, description, course_id, user_id)
+        VALUE (?, ?, ?, NULL);
+    `;
+    const data = [req.body.title, req.body.description, req.body.course_id];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            GG(res, err);
+            return;
+        }
+        if (result.affectedRows === 1) {
+            res.json({
+                status: 1,
+                reason: 'Success',
+                id: result.insertId
+            });
+        } else GG(res, 'Token error');
+    });
+});
+
 /* GLOBAL */
 app.get('/', (req, res) => {
     res.send('DDL backend working.');
+});
+
+app.get('/admin', (req, res) => {
+    res.render('admin', {});
 });
 
 app.listen(5000, () => {

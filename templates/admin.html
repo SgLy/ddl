@@ -1,0 +1,164 @@
+<html>
+  <head>
+    <title>DDL Administraion page</title>
+    <link href="https://cdn.bootcss.com/semantic-ui/2.2.13/semantic.min.css" rel="stylesheet">
+  </head>
+  <link rel="stylesheet" href="admin.css">
+  <body>
+    <div class="ui fixed inverted menu">
+      <div class="ui container">
+        <a href="#" class="item">Don't Destroy Life</a>
+      </div>
+    </div>
+    <div class="ui main container">
+      <div class="ui top attached tabular menu">
+        <div id="course" class="active item" data-tab="course">Course</div>
+        <div id="deadline" class="item" data-tab="deadline">Deadline</div>
+        <div id="notice" class="item" data-tab="notice">Notice</div>
+        <div id="user" class="item" data-tab="user">User</div>
+        <div id="user_course" class="item" data-tab="user_course">User Course</div>
+      </div>
+      <div class="ui bottom attached active tab segment" data-tab="course">
+        <table id="course_list" class="ui center striped aligned table">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Semester</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <form class="ui form">
+          <div class="two fields">
+            <div class="field">
+              <input type="text" id="course_name" placeholder="Name">
+            </div>
+            <div class="field">
+              <input type="text" id="course_semester" placeholder="Semester">
+            </div>
+          </div>
+          <div id="add_course" class="ui fluid positive button">Add</div>
+        </form>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="deadline">
+        <table id="deadline_list" class="ui center striped aligned table">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Time</th>
+              <th>Done</th>
+              <th>Course ID</th>
+              <th>User ID</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <form class="ui form">
+          <div class="four fields">
+            <div class="field">
+              <input type="text" id="deadline_title" placeholder="Title">
+            </div>
+            <div class="field">
+              <input type="text" id="deadline_description" placeholder="Description">
+            </div>
+            <div class="field">
+              <input type="text" id="deadline_time" placeholder="Time">
+            </div>
+            <div class="field">
+              <input type="text" id="deadline_course_id" placeholder="Course ID">
+            </div>
+          </div>
+          <div id="add_deadline" class="ui fluid positive button">Add</div>
+        </form>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="notice">
+        <table id="notice_list" class="ui center striped aligned table">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Course ID</th>
+              <th>User ID</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <form class="ui form">
+          <div class="three fields">
+            <div class="field">
+              <input type="text" id="notice_title" placeholder="Title">
+            </div>
+            <div class="field">
+              <input type="text" id="notice_description" placeholder="Description">
+            </div>
+            <div class="field">
+              <input type="text" id="notice_course_id" placeholder="Course ID">
+            </div>
+          </div>
+          <div id="add_notice" class="ui fluid positive button">Add</div>
+        </form>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="user">
+        <table id="user_list" class="ui center striped aligned table">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Username</th>
+              <th>Nickname</th>
+              <th>Password</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <form class="ui form">
+          <div class="three fields">
+            <div class="field">
+              <input type="text" id="user_username" placeholder="Username">
+            </div>
+            <div class="field">
+              <input type="text" id="user_nickname" placeholder="Nickname">
+            </div>
+            <div class="field">
+              <input type="text" id="user_password" placeholder="Password">
+            </div>
+          </div>
+          <div id="add_user" class="ui fluid positive button">Add</div>
+        </form>
+      </div>
+      <div class="ui bottom attached tab segment" data-tab="user_course">
+        <table id="user_course_list" class="ui center striped aligned table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Course ID</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <form class="ui form">
+          <div class="two fields">
+            <div class="field">
+              <input type="text" id="user_course_user_id" placeholder="User ID">
+            </div>
+            <div class="field">
+              <input type="text" id="user_course_course_id" placeholder="Course ID">
+            </div>
+          </div>
+          <div id="add_user_course" class="ui fluid positive button">Add</div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/semantic-ui/2.2.13/semantic.min.js"></script>
+  <script src="admin.js"></script>
+</html>
