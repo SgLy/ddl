@@ -30,6 +30,9 @@ connection.connect();
 /* UUID */
 const uuid = require('uuid/v1');
 
+/* Moment */
+const moment = require('moment');
+
 function responseError(res, err) {
     let msg;
     if (err.sqlMessage !== undefined) {
@@ -66,7 +69,7 @@ app.get('/api/deadline', (req, res) => {
                 id: r.id,
                 title: r.title,
                 description: r.description,
-                time: r.time,
+                time: moment(r.time).format('x'),
                 done: r.done
             }))
         });
@@ -205,11 +208,12 @@ app.get('/api/chats', (req, res) => {
     console.log('GET /api/chats', req.query);
     const q = `
         SELECT course.id, chat.content, user.nickname, course.name from chat
+	INNER JOIN (SELECT course_id, MAX(time) as lastest FROM chat GROUP BY course_id) r
+	    ON chat.time = lastest AND chat.course_id = r.course_id
         LEFT JOIN course ON chat.course_id = course.id
         LEFT JOIN user ON chat.user_id = user.id
         LEFT JOIN user_course ON chat.course_id = user_course.course_id
         WHERE user_course.user_id = (SELECT id FROM user WHERE token = ?)
-        GROUP BY chat.course_id ORDER BY time DESC
     `;
     const data = [req.query.token];
     connection.query(q, data, (err, result) => {
@@ -275,7 +279,6 @@ app.post('/api/chat/:id', (req, res) => {
             return;
         }
         if (result.affectedRows === 1) {
-            console.log(result);
             res.json({
                 status: 1,
                 reason: 'Success',

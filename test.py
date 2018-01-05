@@ -6,20 +6,20 @@ url = 'http://localhost:5000'
 def register():
     r = requests.put(url + '/api/user', data = {
         'username': 'sgly',
-        'password': 'passwd',
+        'password': 'test',
         'nickname': 'SgLy'
     })
     return json.loads(r.text)
 
 def login():
-    r = requests.get(url + '/api/login', data = {
+    r = requests.get(url + '/api/login', params = {
         'username': 'sgly',
-        'password': 'passwd',
+        'password': 'test',
     })
     return json.loads(r.text)
 
 def get_deadline(token):
-    r = requests.get(url + '/api/deadline', data = {
+    r = requests.get(url + '/api/deadline', params = {
         'token': token
     })
     return json.loads(r.text)
@@ -52,7 +52,7 @@ def delete_notice(token, id):
     return json.loads(r.text)
 
 def get_notice(token):
-    r = requests.get(url + '/api/notice', data = {
+    r = requests.get(url + '/api/notice', params = {
         'token': token
     })
     return json.loads(r.text)
@@ -66,7 +66,7 @@ def make_notice(token):
     return json.loads(r.text)
 
 def get_chat(token):
-    r = requests.get(url + '/api/chats', data = {
+    r = requests.get(url + '/api/chats', params = {
         'token': token
     })
     return json.loads(r.text)
@@ -79,7 +79,7 @@ def make_course(name, semester):
     return json.loads(r.text)
 
 def get_course():
-    r = requests.get(url + '/api/course', data = {})
+    r = requests.get(url + '/api/course', params = {})
     return json.loads(r.text)
 
 def new_chat(token, course_id, content):
@@ -90,7 +90,7 @@ def new_chat(token, course_id, content):
     return json.loads(r.text)
 
 def get_chats(token, course_id, last_id = 0):
-    r = requests.get(url + '/api/chat/%s' % course_id, data = {
+    r = requests.get(url + '/api/chat/%s' % course_id, params = {
         'token': token,
         'last_message_id': last_id
     })
@@ -106,18 +106,19 @@ print('token: ', t)
 print(make_deadline(t))
 ddl = get_deadline(t)
 print(ddl)
-print(put_deadline(t, ddl['deadlines'][0]['id']))
+print(put_deadline(t, ddl['deadlines'][-1]['id']))
 print(get_deadline(t))
-print(delete_deadline(t, ddl['deadlines'][0]['id']))
+print(delete_deadline(t, ddl['deadlines'][-1]['id']))
 print(get_deadline(t))
 
 print(make_notice(t))
 nts = get_notice(t)
 print(nts)
-print(delete_notice(t, nts['notices'][0]['id']))
+print(delete_notice(t, nts['notices'][-1]['id']))
 print(get_notice(t))
 
 print(get_chat(t))
+quit()
 
 print(make_course('db', '17-18autumn'));
 crs = get_course()
