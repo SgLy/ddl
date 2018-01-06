@@ -208,8 +208,8 @@ app.get('/api/chats', (req, res) => {
     console.log('GET /api/chats', req.query);
     const q = `
         SELECT course.id, chat.content, user.nickname, course.name from chat
-	INNER JOIN (SELECT course_id, MAX(time) as lastest FROM chat GROUP BY course_id) r
-	    ON chat.time = lastest AND chat.course_id = r.course_id
+        INNER JOIN (SELECT course_id, MAX(time) as lastest FROM chat GROUP BY course_id) r
+        ON chat.time = lastest AND chat.course_id = r.course_id
         LEFT JOIN course ON chat.course_id = course.id
         LEFT JOIN user ON chat.user_id = user.id
         LEFT JOIN user_course ON chat.course_id = user_course.course_id
@@ -292,8 +292,8 @@ app.post('/api/chat/:id', (req, res) => {
 /* USER */
 app.put('/api/user', (req, res) => {
     console.log('POST /api/user', req.body);
-    const q = 'INSERT INTO user ( username, password, nickname ) VALUE (?, ?, ?)';
-    const data = [req.body.username, req.body.password, req.body.nickname];
+    const q = 'INSERT INTO user ( username, password, stuid, nickname ) VALUE (?, ?, ?, ?)';
+    const data = [req.body.username, req.body.password, req.body.stuid, req.body.nickname];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -310,8 +310,8 @@ app.put('/api/user', (req, res) => {
 });
 app.post('/api/user', (req, res) => {
     console.log('POST /api/user', req.body);
-    const q = 'UPDATE user SET password = ?, nickname = ? WHERE token = ?';
-    const data = [req.body.password, req.body.nickname, req.body.token];
+    const q = 'UPDATE user SET password = ?, stuid = ?, nickname = ? WHERE token = ?';
+    const data = [req.body.password, req.body.stuid, req.body.nickname, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -339,7 +339,8 @@ app.get('/api/user', (req, res) => {
                 status: 1,
                 reason: 'Success',
                 username: result[0].username,
-                nickname: result[0].nickname
+                nickname: result[0].nickname,
+                stuid: result[0].stuid
             });
         } else responseError(res, 'Token error');
     });
@@ -384,7 +385,8 @@ app.get('/api/admin/course', (req, res) => {
             courses: result.map(r => ({
                 id: r.id,
                 name: r.name,
-                semester: r.semester
+                semester: r.semester,
+                teacher: r.teacher
             }))
         });
     });
@@ -395,8 +397,8 @@ app.post('/api/admin/course', (req, res) => {
         res.json({ status: -1, reason: 'Admin required' });
         return;
     }
-    const q = 'INSERT INTO course (name, semester) VALUES (?, ?)';
-    const data = [req.body.name, req.body.semester];
+    const q = 'INSERT INTO course (name, teacher, semester) VALUES (?, ?, ?)';
+    const data = [req.body.name, req.body.teacher, req.body.semester];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
@@ -425,6 +427,7 @@ app.get('/api/admin/course/user', (req, res) => {
         }
         res.json({
             user_courses: result.map(r => ({
+                id: r.id,
                 user_id: r.user_id,
                 course_id: r.course_id
             }))
@@ -471,6 +474,7 @@ app.get('/api/admin/user', (req, res) => {
                 id: r.id,
                 username: r.username,
                 password: r.password,
+                stuid: r.stuid,
                 nickname: r.nickname
             }))
         });
@@ -574,6 +578,30 @@ app.post('/api/admin/notice', (req, res) => {
                 id: result.insertId
             });
         } else responseError(res, 'Token error');
+    });
+});
+
+['course', 'deadline', 'notice', 'user', 'user_course'].forEach(type => {
+    app.delete(`/api/admin/${type}`, (req, res) => {
+        console.log('DELETE /api/admin/' + type, req.body);
+        if (req.body.admin_token !== admin_token) {
+            res.json({ status: -1, reason: 'Admin required' });
+            return;
+        }
+        const q = `DELETE FROM ${type} WHERE id = ?`;
+        const data = [req.body.id];
+        connection.query(q, data, (err, result) => {
+            if (err) {
+                responseError(res, err);
+                return;
+            }
+            if (result.affectedRows === 1) {
+                res.json({
+                    status: 1,
+                    reason: 'Success'
+                });
+            } else responseError(res, 'Token error');
+        });
     });
 });
 

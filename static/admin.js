@@ -1,51 +1,69 @@
 'use strict';
-let baseUrl = 'http://localhost:5000';
-$('.ui.tabular.menu .item').tab();
 
-function loadUser() {
-    $.get('/api/admin/user', { admin_token }, (data) => {
-        let el = '';
-        data.users.forEach(d => {
-            el += `<tr><td>${d.id}</td><td>${d.username}</td><td>${d.nickname}</td><td>${d.password}</td><td></td></tr>`;
-        });
-        $('#user_list>tbody').html(el);
+/* global admin_token */
+
+$('.ui.tabular.menu .item').tab();
+$('.ui.dropdown').dropdown();
+$('table').on('click', 'i.close.link.icon', function() {
+    let type = $(this).data('type');
+    let id = $(this).data('id');
+    $.ajax({
+        url: `/api/admin/${type}`,
+        method: 'DELETE',
+        data: { admin_token, id },
+        success: reload[type]
     });
+});
+
+function del(type, id) {
+    return `<i class="close link icon" data-id="${id}" data-type="${type}"></i>`;
 }
-$('#user').on('click', loadUser);
+
+function load(type, keys, api_name = type) {
+    return () => {
+        $.get(`/api/admin/${api_name}`, { admin_token }, (data) => {
+            let el = '';
+            data[`${type}s`].forEach(d => {
+                let cells = keys.map(k => `<td>${d[k]}</td>`).join('');
+                cells += `<td>${del(type, d.id)}</td>`;
+                el += `<tr>${cells}</tr>`;
+            });
+            $(`#${type}_list>tbody`).html(el);
+            $(`.ui.dropdown[type=${type}]`).dropdown({
+                values: data[`${type}s`].map(d => ({
+                    name: d[keys[1]],
+                    value: d.id
+                }))
+            });
+        });
+    };
+}
+const reload = {
+    user: load('user', ['id', 'username', 'nickname', 'stuid', 'password']),
+    deadline: load('deadline', ['id', 'title', 'description', 'time', 'done', 'course_id', 'user_id']),
+    notice: load('notice', ['id', 'title', 'description', 'course_id', 'user_id']),
+    course: load('course', ['id', 'name', 'teacher', 'semester']),
+    userCourse: load('user_course', ['id', 'user_id', 'course_id'], 'course/user')
+};
+
+$('#user').on('click', reload.user);
 $('#add_user').on('click', () => {
     const data = {
         admin_token,
         username: $('#user_username').val(),
         nickname: $('#user_nickname').val(),
+        stuid: $('#user_stuid').val(),
         password: $('#user_password').val()
     };
     $.ajax({
         url: '/api/user',
         method: 'PUT',
         data: data,
-        success: loadUser
+        success: reload.user
     });
 });
 
-function loadDeadline() {
-    $.get('/api/admin/deadline', { admin_token }, (data) => {
-        let el = '';
-        data.deadlines.forEach(d => {
-            el += `<tr>
-                <td>${d.id}</td>
-                <td>${d.title}</td>
-                <td>${d.description}</td>
-                <td>${d.time}</td>
-                <td>${d.done}</td>
-                <td>${d.course_id}</td>
-                <td>${d.user_id}</td>
-                <td></td>
-            </tr>`;
-        });
-        $('#deadline_list>tbody').html(el);
-    });
-}
-$('#deadline').on('click', loadDeadline);
+$('#deadline').on('click', reload.deadline);
 $('#add_deadline').on('click', () => {
     const data = {
         admin_token,
@@ -54,26 +72,10 @@ $('#add_deadline').on('click', () => {
         time: $('#deadline_time').val(),
         course_id: $('#deadline_course_id').val()
     };
-    $.post('/api/admin/deadline', data, loadDeadline);
+    $.post('/api/admin/deadline', data, reload.deadline);
 });
 
-function loadNotice() {
-    $.get('/api/admin/notice', { admin_token }, (data) => {
-        let el = '';
-        data.notices.forEach(d => {
-            el += `<tr>
-                <td>${d.id}</td>
-                <td>${d.title}</td>
-                <td>${d.description}</td>
-                <td>${d.course_id}</td>
-                <td>${d.user_id}</td>
-                <td></td>
-            </tr>`;
-        });
-        $('#notice_list>tbody').html(el);
-    });
-}
-$('#notice').on('click', loadNotice);
+$('#notice').on('click', reload.notice);
 $('#add_notice').on('click', () => {
     const data = {
         admin_token,
@@ -81,46 +83,25 @@ $('#add_notice').on('click', () => {
         description: $('#notice_description').val(),
         course_id: $('#notice_course_id').val()
     };
-    $.post('/api/admin/notice', data, loadNotice);
+    $.post('/api/admin/notice', data, reload.notice);
 });
 
-function loadCourse() {
-    $.get('/api/admin/course', { admin_token }, (data) => {
-        let el = '';
-        data.courses.forEach(d => {
-            el += `<tr><td>${d.id}</td><td>${d.name}</td><td>${d.semester}</td><td></td></tr>`;
-        });
-        $('#course_list>tbody').html(el);
-    });
-}
-$('#course').on('click', loadCourse);
+$('#course').on('click', reload.course);
 $('#add_course').on('click', () => {
     const data = {
         admin_token,
         name: $('#course_name').val(),
+        teacher: $('#course_teacher').val(),
         semester: $('#course_semester').val()
     };
-    $.post('/api/admin/course', data, loadCourse);
+    $.post('/api/admin/course', data, reload.course);
 });
 
-function loadUserCourse() {
-    $.get('/api/admin/course/user', { admin_token }, (data) => {
-        let el = '';
-        data.user_courses.forEach(d => {
-            el += `<tr>
-                <td>${d.user_id}</td>
-                <td>${d.course_id}</td>
-                <td></td>
-            </tr>`;
-        });
-        $('#user_course_list>tbody').html(el);
-    });
-}
-$('#user_course').on('click', loadUserCourse);
+$('#user_course').on('click', reload.userCourse);
 $('#add_user_course').on('click', () => {
     const user_id = $('#user_course_user_id').val();
     const course_id = $('#user_course_course_id').val();
-    $.post(`/api/admin/course/${course_id}/user/${user_id}`, { admin_token }, loadUserCourse);
+    $.post(`/api/admin/course/${course_id}/user/${user_id}`, { admin_token }, reload.userCourse);
 });
 
-$(loadCourse);
+$(reload.course);

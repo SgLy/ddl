@@ -29,6 +29,7 @@ CREATE TABLE chat (
 CREATE TABLE course (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(128) NOT NULL,
+    teacher VARCHAR(128) NOT NULL,
     semester VARCHAR(128) NOT NULL
 );
 CREATE TABLE user (
@@ -36,10 +37,12 @@ CREATE TABLE user (
     username VARCHAR(128) NOT NULL UNIQUE,
     password VARCHAR(32) NOT NULL,
     nickname VARCHAR(128) NOT NULL,
+    stuid VARCHAR(10) NOT NULL UNIQUE,
     token VARCHAR(36) UNIQUE
 );
 CREATE TABLE user_course (
+    id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     course_id INT NOT NULL,
-    PRIMARY KEY (user_id, course_id)
+    UNIQUE KEY (user_id, course_id)
 );
