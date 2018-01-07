@@ -101,9 +101,9 @@ app.post('/api/deadline', (req, res) => {
 });
 app.put('/api/deadline/:id', (req, res) => {
     console.log('PUT /api/deadline/', req.params.id, req.body);
-    const q = `UPDATE deadline SET done = TRUE WHERE id = ?
+    const q = `UPDATE deadline SET done = ? WHERE id = ?
         AND user_id = (SELECT id FROM user WHERE token = ?)`;
-    const data = [req.params.id, req.body.token];
+    const data = [req.body.done, req.params.id, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);

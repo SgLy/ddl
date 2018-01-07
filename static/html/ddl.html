@@ -74,6 +74,7 @@
                 <v-card-text>
                   <v-text-field label="Username" v-model="regi_username" :rules="requireRule" required></v-text-field>
                   <v-text-field label="Nickname" v-model="regi_nickname" :rules="requireRule" required></v-text-field>
+                  <v-text-field label="StudentID" v-model="regi_stuid" :rules="requireRule" required></v-text-field>
                   <v-text-field label="Password" v-model="regi_password" :rules="requireRule" required type="password"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -130,6 +131,7 @@
                               </v-card-title>
                               <v-card-actions>
                                 <v-btn v-if="!item.done" flat color="orange" @click="finish_ddl(item.id)">Finish</v-btn>
+                                <v-btn v-else flat color="orange" @click="unfinish_ddl(item.id)">Unfinish</v-btn>
                                 <v-btn flat color="orange" @click="delete_ddl(item.id)">Remove</v-btn>
                               </v-card-actions>  
                             </v-flex>

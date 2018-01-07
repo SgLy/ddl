@@ -48,6 +48,7 @@ var vm = new Vue({
     // register
     regi_username: "",
     regi_nickname: "",
+    regi_stuid: "",
     regi_password: "",
     
     // add ddl
@@ -130,14 +131,15 @@ var vm = new Vue({
 
     submit_register: function (event) {
       let that = this;
-      if (this.regi_username != "" && this.regi_nickname != "" && this.regi_password != "") {
+      if (this.regi_username != "" && this.regi_nickname != "" && this.regi_password != "" && this.regi_stuid != "") {
         $.ajax({
           url: "/api/user",
           type: "put",
           data: {
             username: that.regi_username,
             password: that.regi_password,
-            nickname: that.regi_nickname
+            nickname: that.regi_nickname,
+            stuid: that.regi_stuid
           },
           dataType: "json",
           success: function (res) {
@@ -157,7 +159,27 @@ var vm = new Vue({
         url: '/api/deadline/' + ddl_id,
         type: 'put',
         data: {
-          token: token
+          token: token,
+          done: 1
+        },
+        dataType: 'json',
+        success: function (res) {
+          if (res.status == 1) {
+            show_message("Finished successfully!", 1);
+            refresh();
+          } else {
+            show_message(res.reason, 0);
+          }
+        }
+      });
+    },
+    unfinish_ddl: function (ddl_id) {
+      $.ajax({
+        url: '/api/deadline/' + ddl_id,
+        type: 'put',
+        data: {
+          token: token,
+          done: 0
         },
         dataType: 'json',
         success: function (res) {
@@ -238,14 +260,13 @@ function refresh_ddl() {
         let today = new Date();
         today.setHours(0, 0, 0, 0);
         for(let i = 0; i < ddl.length; ++i) {
-          ddl[i].time = parseInt(ddl[i].time);
-          if (ddl[i].time < last_time) {
+          ddl[i].time = new Date(parseInt(ddl[i].time));
+          ddl[i].time.setHours(0, 0, 0, 0);
+
+          if (i == 0 || ddl[i].time < last_time) {
             ddl[i].show_time = true;
             last_time = ddl[i].time;
           }
-          ddl[i].time = new Date(ddl[i].time);
-          ddl[i].time.setHours(0, 0, 0, 0);
-          
           // check today
           if (greater_today && ddl[i].time <= today) {
             ddl[i].showToday = true;
