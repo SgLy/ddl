@@ -2,6 +2,7 @@
 <html>
 <head>
   <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  <link href="https://fonts.googleapis.com/earlyaccess/notosanssc.css" rel="stylesheet">
   <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
   <link href="css/ddl.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -97,8 +98,50 @@
                     <template v-if="ddls.length == 0">
                       <div class="headline white--text">You don't have any DDLs now...</div>
                     </template>
-                    <template v-else v-for="(item, index) in ddls">
-                      <template v-if="item.showToday">
+                    <template v-else>
+                      <template v-for="(item, index) in ddls">
+                        <template v-if="item.showToday">
+                          <v-flex xs1>
+                            <div class="headline white--text">Today</div>
+                          </v-flex>
+                          <v-flex xs11>
+                            <div class="today-cell">
+                              <div class="today-circle"></div>
+                              <div class="today-line"></div>
+                            </div>
+                          </v-flex>
+                        </template>
+                        <v-flex xs1>
+                          <div v-if="item.show_time">
+                            <div class="headline white--text">{{item.time.getUTCDate() + 1}}</div>
+                            <div class="headline white--text">{{_getMonth(item.time.getUTCMonth())}}</div>
+                            <div class="caption white--text">{{item.time.getUTCFullYear()}}</div>
+                          </div>
+                        </v-flex>
+                        <v-flex xs11>
+                          <v-card style="margin-bottom: 20px;">
+                            <v-layout row wrap>
+                              <v-flex lg3 sm4 :style="'background-color: ' + item.color + ';'">
+                                <v-card-title class="white--text">
+                                  <div class="headline card-head">{{item.title}}</div>
+                                  <div>{{item.course_name}}</div>
+                                </v-card-title>
+                              </v-flex>
+                              <v-flex lg9 sm8>
+                                <v-card-title>
+                                  <div>{{item.description}}</div>
+                                </v-card-title>
+                                <v-card-actions>
+                                  <v-btn v-if="!item.done" flat color="orange" @click="finish_ddl(item.id)">Finish</v-btn>
+                                  <v-btn v-else flat color="orange" @click="unfinish_ddl(item.id)">Unfinish</v-btn>
+                                  <v-btn flat color="orange" @click="delete_ddl(item.id)">Remove</v-btn>
+                                </v-card-actions>  
+                              </v-flex>
+                            </v-layout>
+                          </v-card>
+                        </v-flex>
+                      </template>
+                      <template v-if="today_last">
                         <v-flex xs1>
                           <div class="headline white--text">Today</div>
                         </v-flex>
@@ -109,35 +152,6 @@
                           </div>
                         </v-flex>
                       </template>
-                      <v-flex xs1>
-                        <div v-if="item.show_time">
-                          <div class="headline white--text">{{item.time.getUTCDate() + 1}}</div>
-                          <div class="headline white--text">{{_getMonth(item.time.getUTCMonth())}}</div>
-                          <div class="caption white--text">{{item.time.getUTCFullYear()}}</div>
-                        </div>
-                      </v-flex>
-                      <v-flex xs11>
-                        <v-card style="margin-bottom: 20px;">
-                          <v-layout row wrap>
-                            <v-flex lg3 sm4 :style="'background-color: ' + item.color + ';'">
-                              <v-card-title class="white--text">
-                                <div class="headline card-head">{{item.title}}</div>
-                                <div>{{item.course_name}}</div>
-                              </v-card-title>
-                            </v-flex>
-                            <v-flex lg9 sm8>
-                              <v-card-title>
-                                <div>{{item.description}}</div>
-                              </v-card-title>
-                              <v-card-actions>
-                                <v-btn v-if="!item.done" flat color="orange" @click="finish_ddl(item.id)">Finish</v-btn>
-                                <v-btn v-else flat color="orange" @click="unfinish_ddl(item.id)">Unfinish</v-btn>
-                                <v-btn flat color="orange" @click="delete_ddl(item.id)">Remove</v-btn>
-                              </v-card-actions>  
-                            </v-flex>
-                          </v-layout>
-                        </v-card>
-                      </v-flex>
                     </template>
                   </v-layout>
 

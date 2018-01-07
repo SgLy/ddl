@@ -72,7 +72,10 @@ var vm = new Vue({
       }
 		],
     current_page: 0,
-    ddls: []
+
+    // ddls
+    ddls: [],
+    today_last: false
   },
   computed: {
   },
@@ -242,6 +245,7 @@ var vm = new Vue({
 vm.$vuetify.theme.primary = '#1976d2';
 
 function refresh_ddl() {
+  vm.today_last = false;
   if (!vm.logined) {
     vm.ddls = []
     return;
@@ -277,6 +281,9 @@ function refresh_ddl() {
           if (ddl[i].done) {
             ddl[i].color = "#546e7a";
           }
+        }
+        if (greater_today) {
+          vm.today_last = true;
         }
         vm.ddls = ddl;
       }
