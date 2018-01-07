@@ -2,7 +2,7 @@
 
 var token = "";
 
-var random_colors = ["#0277bd", "#c62828", "#512da8", "#00695c",
+var random_colors = ["#0277bd", "#c62828", "#512da8", "#ef6c00", "#00695c",
   "#ad1457", "#33691e"];
 
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -34,6 +34,7 @@ var vm = new Vue({
     nickname: "",
     snackbar: false,
     snackbar_text: "",
+    snackbar_color: "",
 
     // login related
     login_dialog: false,
@@ -86,7 +87,7 @@ var vm = new Vue({
             if (res.status == 1) {
               vm.nickname = res.nickname;
             } else {
-              show_message(res.reason);
+              show_message(res.reason, 0);
             }
           }
         })
@@ -115,7 +116,7 @@ var vm = new Vue({
               Cookies.set("token", res.token);
               refresh();
             } else {
-              show_message(res.reason);
+              show_message(res.reason, 0);
             }
           }
         });
@@ -141,10 +142,10 @@ var vm = new Vue({
           dataType: "json",
           success: function (res) {
             if (res.status == 1) {
-              show_message("Registered successfully!");
+              show_message("Registered successfully!", 1);
               that.show_register = false;
             } else {
-              show_message(res.reason);
+              show_message(res.reason, 0);
             }
           }
         });
@@ -161,10 +162,10 @@ var vm = new Vue({
         dataType: 'json',
         success: function (res) {
           if (res.status == 1) {
-            show_message("Finished successfully!");
+            show_message("Finished successfully!", 1);
             refresh();
           } else {
-            show_message(res.reason);
+            show_message(res.reason, 0);
           }
         }
       });
@@ -179,10 +180,10 @@ var vm = new Vue({
         dataType: 'json',
         success: function (res) {
           if (res.status == 1) {
-            show_message("Deleted successfully!");
+            show_message("Deleted successfully!", 1);
             refresh();
           } else {
-            show_message(res.reason);
+            show_message(res.reason, 0);
           }
         }
       });
@@ -202,11 +203,11 @@ var vm = new Vue({
           dataType: "json",
           success: function (res) {
             if (res.status == 1) {
-              show_message("DDL added successfully!");
+              show_message("DDL added successfully!", 1);
               that.add_ddl_dialog = false;
               refresh();
             } else {
-              show_message(res.reason);
+              show_message(res.reason, 0);
             }
           }
         });
@@ -251,7 +252,10 @@ function refresh_ddl() {
             greater_today = false;
           }
 
-          ddl[i].color = random_colors.randomElement();
+          ddl[i].color = random_colors[i % random_colors.length];
+          if (ddl[i].done) {
+            ddl[i].color = "#546e7a";
+          }
         }
         vm.ddls = ddl;
       }
@@ -262,7 +266,15 @@ function refresh () {
   refresh_ddl()
 }
 
-function show_message(s) {
+function show_message(s, i = 2) {
+  // i = 1 for success, 0 for error, 2 for info
+  if (i == 0) {
+    vm.snackbar_color = 'error';
+  } else if (i == 1){
+    vm.snackbar_color = 'success';
+  } else {
+    vm.snackbar_color = 'info'; 
+  }
   vm.snackbar_text = s;
   vm.snackbar = true;
 }

@@ -129,7 +129,7 @@
                                 <div>{{item.description}}</div>
                               </v-card-title>
                               <v-card-actions>
-                                <v-btn flat color="orange" @click="finish_ddl(item.id)">Finish</v-btn>
+                                <v-btn v-if="!item.done" flat color="orange" @click="finish_ddl(item.id)">Finish</v-btn>
                                 <v-btn flat color="orange" @click="delete_ddl(item.id)">Remove</v-btn>
                               </v-card-actions>  
                             </v-flex>
@@ -174,6 +174,7 @@
           :timeout="4000"
           buttom
           v-model="snackbar"
+          :color="snackbar_color"
           >{{snackbar_text}}</v-snackbar>
 
         <v-btn :class="'fab-add'"
