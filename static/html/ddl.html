@@ -101,24 +101,24 @@
                     <template v-else>
                       <template v-for="(item, index) in ddls">
                         <template v-if="item.showToday">
-                          <v-flex xs1>
+                          <v-flex xs12 md1>
                             <div class="headline white--text">Today</div>
                           </v-flex>
-                          <v-flex xs11>
+                          <v-flex xs12 md11>
                             <div class="today-cell">
                               <div class="today-circle"></div>
                               <div class="today-line"></div>
                             </div>
                           </v-flex>
                         </template>
-                        <v-flex xs1>
+                        <v-flex xs2 sm1>
                           <div v-if="item.show_time">
                             <div class="headline white--text">{{item.time.getUTCDate() + 1}}</div>
                             <div class="headline white--text">{{_getMonth(item.time.getUTCMonth())}}</div>
                             <div class="caption white--text">{{item.time.getUTCFullYear()}}</div>
                           </div>
                         </v-flex>
-                        <v-flex xs11>
+                        <v-flex xs10 sm11>
                           <v-card style="margin-bottom: 20px;">
                             <v-layout row wrap>
                               <v-flex lg3 sm4 :style="'background-color: ' + item.color + ';'">
@@ -142,10 +142,10 @@
                         </v-flex>
                       </template>
                       <template v-if="today_last">
-                        <v-flex xs1>
+                        <v-flex xs0 md1>
                           <div class="headline white--text">Today</div>
                         </v-flex>
-                        <v-flex xs11>
+                        <v-flex xs12 md11>
                           <div class="today-cell">
                             <div class="today-circle"></div>
                             <div class="today-line"></div>

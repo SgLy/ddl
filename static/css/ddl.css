@@ -64,3 +64,6 @@
     right: 20px;
 }
 
+.icon {
+    -webkit-user-select: none;
+}

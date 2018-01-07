@@ -162,7 +162,7 @@ app.get('/api/notice', (req, res) => {
                 id: r.id,
                 title: r.title,
                 description: r.description,
-                couser_name: r.course_name
+                course_name: r.course_name
             }))
         });
     });
@@ -612,7 +612,8 @@ app.post('/api/admin/notice', (req, res) => {
 
 /* GLOBAL */
 app.get('/', (req, res) => {
-    res.send('DDL backend working.');
+    res.redirect('/ddl');
+    //res.send('DDL backend working.');
 });
 
 app.get('/ddl', (req, res) => {
