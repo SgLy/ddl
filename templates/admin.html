@@ -8,6 +8,9 @@
     <div class="ui fixed inverted menu">
       <div class="ui container">
         <a href="#" class="item">Don't Destroy Life</a>
+        <div class="right menu">
+          <span class="item">Administraion page</span>
+        </div>
       </div>
     </div>
     <div class="ui main container">
@@ -24,6 +27,7 @@
             <tr>
               <th>Id</th>
               <th>Name</th>
+              <th>Teacher</th>
               <th>Semester</th>
               <th></th>
             </tr>
@@ -31,12 +35,24 @@
           <tbody></tbody>
         </table>
         <form class="ui form">
-          <div class="two fields">
+          <div class="three fields">
             <div class="field">
               <input type="text" id="course_name" placeholder="Name">
             </div>
             <div class="field">
-              <input type="text" id="course_semester" placeholder="Semester">
+              <input id="course_teacher" type="text" placeholder="Teacher">
+            </div>
+            <div class="field">
+              <div class="ui selection dropdown" type="semester">
+                <input type="hidden" name="course_semester" id="course_semester">
+                <i class="dropdown icon"></i>
+                <div class="default text">Semester</div>
+                <div class="menu">
+                  <div class="item" data-value="2017-18 秋季学期">2017-18 秋季学期</div>
+                  <div class="item" data-value="2018-19 春季学期">2018-19 春季学期</div>
+                  <div class="item" data-value="2018-19 秋季学期">2018-19 秋季学期</div>
+                </div>
+              </div>
             </div>
           </div>
           <div id="add_course" class="ui fluid positive button">Add</div>
@@ -70,7 +86,13 @@
               <input type="text" id="deadline_time" placeholder="Time">
             </div>
             <div class="field">
-              <input type="text" id="deadline_course_id" placeholder="Course ID">
+              <div class="ui selection dropdown" type="course">
+                <input type="hidden" name="deadline_course_id" id="deadline_course_id">
+                <i class="dropdown icon"></i>
+                <div class="default text">Course</div>
+                <div class="menu">
+                </div>
+              </div>
             </div>
           </div>
           <div id="add_deadline" class="ui fluid positive button">Add</div>
@@ -99,7 +121,13 @@
               <input type="text" id="notice_description" placeholder="Description">
             </div>
             <div class="field">
-              <input type="text" id="notice_course_id" placeholder="Course ID">
+              <div class="ui selection dropdown" type="course">
+                <input type="hidden" name="notice_course_id" id="notice_course_id">
+                <i class="dropdown icon"></i>
+                <div class="default text">Course</div>
+                <div class="menu">
+                </div>
+              </div>
             </div>
           </div>
           <div id="add_notice" class="ui fluid positive button">Add</div>
@@ -112,6 +140,7 @@
               <th>Id</th>
               <th>Username</th>
               <th>Nickname</th>
+              <th>Student ID</th>
               <th>Password</th>
               <th></th>
             </tr>
@@ -119,12 +148,15 @@
           <tbody></tbody>
         </table>
         <form class="ui form">
-          <div class="three fields">
+          <div class="four fields">
             <div class="field">
               <input type="text" id="user_username" placeholder="Username">
             </div>
             <div class="field">
               <input type="text" id="user_nickname" placeholder="Nickname">
+            </div>
+            <div class="field">
+              <input type="text" id="user_stuid" placeholder="Student ID">
             </div>
             <div class="field">
               <input type="text" id="user_password" placeholder="Password">
@@ -137,6 +169,7 @@
         <table id="user_course_list" class="ui center striped aligned table">
           <thead>
             <tr>
+              <th>ID</th>
               <th>User ID</th>
               <th>Course ID</th>
               <th></th>
@@ -147,10 +180,22 @@
         <form class="ui form">
           <div class="two fields">
             <div class="field">
-              <input type="text" id="user_course_user_id" placeholder="User ID">
+              <div class="ui selection dropdown" type="user">
+                <input type="hidden" name="user_course_user_id" id="user_course_user_id">
+                <i class="dropdown icon"></i>
+                <div class="default text">User</div>
+                <div class="menu">
+                </div>
+              </div>
             </div>
             <div class="field">
-              <input type="text" id="user_course_course_id" placeholder="Course ID">
+              <div class="ui selection dropdown" type="course">
+                <input type="hidden" name="user_course_course_id" id="user_course_course_id">
+                <i class="dropdown icon"></i>
+                <div class="default text">Course</div>
+                <div class="menu">
+                </div>
+              </div>
             </div>
           </div>
           <div id="add_user_course" class="ui fluid positive button">Add</div>
