@@ -39,7 +39,7 @@
             </v-toolbar-items>
           </template>
           <template v-else>
-            <v-toolbar-items @click="login_dialog = true">
+            <v-toolbar-items @click="">
               <v-btn flat>
                 <v-icon dark class="mr-2">account_circle</v-icon>
                 Login
@@ -52,7 +52,7 @@
 				</v-toolbar>
 
         <!-- Login dialog -->
-        <v-dialog v-model="login_dialog" max-width="500px">
+        <v-dialog v-model="login_dialog" persistent max-width="500px">
           <v-card>
             <transition name="switch" mode="out-in">
               <div v-if="!show_register" key="login">
@@ -163,7 +163,7 @@
                       </v-card-title>
                       <v-card-text>
                         <v-text-field label="Title" v-model="add_title" :rules="requireRule" required></v-text-field>
-                        <v-text-field label="Description" v-model="add_description" :rules="requireRule" required></v-text-field>
+                        <v-text-field label="Description" v-model="add_description"></v-text-field>
                         <div class="subheading mb-2">Select a date:</div>
                         <v-date-picker v-model="add_date"></v-date-picker>
                       </v-card-text>
