@@ -622,7 +622,11 @@ app.get('/ddl', (req, res) => {
 
 let admin_token = uuid();
 app.get('/admin', (req, res) => {
-    res.render('admin', { admin_token });
+    console.log('GET /api/chat/', req.query.password);
+    if (req.query.password == "ddl.NB.sgly")
+        res.render('admin', { admin_token });
+    else
+        res.send('Password Error');
 });
 
 app.listen(5000, () => {
