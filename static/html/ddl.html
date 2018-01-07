@@ -76,7 +76,7 @@
                 <v-card-text>
                   <v-text-field label="Username" v-model="regi_username" :rules="requireRule" required></v-text-field>
                   <v-text-field label="Nickname" v-model="regi_nickname" :rules="requireRule" required></v-text-field>
-                  <v-text-field label="StudentID" v-model="regi_stuid" :rules="requireRule" required></v-text-field>
+                  <v-text-field label="StudentID" v-model="regi_stuid" :rules="[(v) => v && v.length > 0 && v.length <= 10 || 'StudentID is required and must be less than 10 characters']" :counter="10" required></v-text-field>
                   <v-text-field label="Password" v-model="regi_password" :rules="requireRule" required type="password"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
