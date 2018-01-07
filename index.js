@@ -79,11 +79,12 @@ app.get('/api/deadline', (req, res) => {
 });
 app.post('/api/deadline', (req, res) => {
     console.log('POST /api/deadline', req.body);
+    const time = moment(parseInt(req.body.time)).format('YYYY-MM-DD HH:mm:ss');
     const q = `
         INSERT INTO deadline (title, description, time, course_id, user_id)
         VALUE (?, ?, ?, NULL, (SELECT id FROM user WHERE token = ?));
     `;
-    const data = [req.body.title, req.body.description, req.body.time, req.body.token];
+    const data = [req.body.title, req.body.description, time, req.body.token];
     connection.query(q, data, (err, result) => {
         if (err) {
             responseError(res, err);
