@@ -30,13 +30,14 @@ Vue.component("timeline-line", {
 var vm = new Vue({
   el: "#app_bar",
   data: {
-    logined: true,
+    logined: false,
     nickname: "",
     snackbar: false,
     snackbar_text: "",
     snackbar_color: "",
 
     // login related
+    login_dialog: false,
     show_register: false,
     requireRule: [
       (v) => !!v || 'Please fill this field',
@@ -77,13 +78,12 @@ var vm = new Vue({
     today_last: false
   },
   computed: {
-    login_dialog: function (val) {
-      return !this.logined;
-    }
+    
   },
   watch: {
     logined: function (val) {
       if (val) {
+        this.login_dialog = false;
         $.ajax({
           url: "/api/user?token=" + token,
           type: "get",
@@ -96,7 +96,9 @@ var vm = new Vue({
             }
           }
         })
-      } 
+      } else {
+        this.login_dialog = true;
+      }
     }
   },
   methods: {
@@ -188,7 +190,7 @@ var vm = new Vue({
         dataType: 'json',
         success: function (res) {
           if (res.status == 1) {
-            show_message("Finished successfully!", 1);
+            show_message("Unfinished successfully!", 1);
             refresh();
           } else {
             show_message(res.reason, 0);
@@ -315,6 +317,6 @@ $(document).ready(function () {
     vm.logined = true;
     refresh();
   } else {
-    vm.logined = false;
+    vm.login_dialog = true;
   }
 });
