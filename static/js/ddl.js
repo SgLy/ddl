@@ -153,7 +153,7 @@ var vm = new Vue({
               show_message("Registered successfully!", 1);
               that.show_register = false;
             } else {
-              show_message(res.reason, 0);
+              show_message(res.reason + " You may submitted a duplicated username or studentID", 0);
             }
           }
         });
