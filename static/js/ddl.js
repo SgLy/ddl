@@ -188,7 +188,7 @@ var vm = new Vue({
         dataType: 'json',
         success: function (res) {
           if (res.status == 1) {
-            show_message("Finished successfully!", 1);
+            show_message("Unfinished successfully!", 1);
             refresh();
           } else {
             show_message(res.reason, 0);
