@@ -51,9 +51,10 @@ app.get('/api/deadline', (req, res) => {
     console.log('GET /api/deadline', req.query);
 
     const q = `
-        SELECT deadline.* FROM deadline
+        SELECT deadline.*, course.name as "course_name" FROM deadline
         LEFT JOIN user_course ON deadline.course_id = user_course.course_id
         LEFT JOIN user ON deadline.user_id = user.id OR user_course.user_id = user.id
+        LEFT JOIN course ON deadline.course_id = course.id
         WHERE user.token = ?
     `;
     const data = [req.query.token];
@@ -69,6 +70,7 @@ app.get('/api/deadline', (req, res) => {
                 id: r.id,
                 title: r.title,
                 description: r.description,
+                course_name: r.course_name,
                 time: moment(r.time).format('x'),
                 done: r.done
             }))
@@ -140,9 +142,10 @@ app.get('/api/notice', (req, res) => {
     console.log('GET /api/notice', req.query);
 
     const q = `
-        SELECT notice.* FROM notice
+        SELECT notice.*, course.name as "course_name" FROM notice
         LEFT JOIN user_course ON notice.course_id = user_course.course_id
         LEFT JOIN user ON notice.user_id = user.id OR user_course.user_id = user.id
+        LEFT JOIN course ON notice.course_id = course.id
         WHERE user.token = ?
     `;
     const data = [req.query.token];
@@ -157,7 +160,8 @@ app.get('/api/notice', (req, res) => {
             notices: result.map(r => ({
                 id: r.id,
                 title: r.title,
-                description: r.description
+                description: r.description,
+                couser_name: r.course_name
             }))
         });
     });
@@ -580,6 +584,10 @@ app.post('/api/admin/notice', (req, res) => {
 /* GLOBAL */
 app.get('/', (req, res) => {
     res.send('DDL backend working.');
+});
+
+app.get('/ddl', (req, res) => {
+    res.sendFile(__dirname + '/static/html/ddl.html');
 });
 
 let admin_token = uuid();

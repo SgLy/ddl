@@ -14,7 +14,7 @@ Get list of all deadlines, as well as details
 
 `{ token }`
 
-`{ status, reason, [ id, title, description, time, done, course_id? ] }`
+`{ status, reason, [ id, title, description, time, done, course_name ] }`
 
 ---
 

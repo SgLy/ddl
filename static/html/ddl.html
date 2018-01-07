@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  <link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <link href="css/ddl.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+  <div id="app_bar">
+    <v-app light>
+      <v-content class="whole-content">
+        <v-toolbar dark color="primary">
+          <v-toolbar-title>Don't Destory Life</v-toolbar-title>
+					<v-menu class="ml-3" :nudge-width="100" offset-y fill-height>
+						<v-toolbar-items slot="activator">
+              <v-icon dark>{{pages[current_page].icon}}</v-icon>
+							<v-icon dark>arrow_drop_down</v-icon>
+						</v-toolbar-items>
+						<v-list>
+              <v-list-tile v-for="(item, index) in pages" :key="index" @click="function() {current_page = index;}">
+                <v-icon light class="mr-2">{{item.icon}}</v-icon>
+                <v-list-tile-title>{{item.name}}</v-list-tile-title>
+							</v-list-tile>
+						</v-list>
+					</v-menu>
+          <v-spacer></v-spacer>
+          
+          <template v-if="logined">
+            <div class="subheading text--white">
+            Welcome, {{nickname}}!
+            </div>
+            <v-toolbar-items @click="logout">
+              <v-btn flat>
+                <v-icon dark class="mr-2">account_circle</v-icon>
+                Logout
+              </v-btn>
+            </v-toolbar-items>
+          </template>
+          <template v-else>
+            <v-toolbar-items @click="login_dialog = true">
+              <v-btn flat>
+                <v-icon dark class="mr-2">account_circle</v-icon>
+                Login
+              </v-btn>
+            </v-toolbar-items>
+          </template>
+          <v-btn icon @click="_refresh">
+            <v-icon>refresh</v-icon>
+          </v-btn>
+				</v-toolbar>
+
+        <!-- Login dialog -->
+        <v-dialog v-model="login_dialog" max-width="500px">
+          <v-card>
+            <transition name="switch" mode="out-in">
+              <div v-if="!show_register" key="login">
+                <v-card-title>
+                  Login
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field label="Username" v-model="login_username" :rules="requireRule" required></v-text-field>
+                  <v-text-field label="Password" v-model="login_password" :rules="requireRule" required type="password"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                <v-btn color="primary" flat @click.stop="submit_login">Login</v-btn>
+                <v-btn color="primary" flat @click.stop="show_register = true">Register</v-btn>
+                </v-card-actions>
+              </div>
+              <div v-else key="register">
+                <v-card-title>
+                  Register 
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field label="Username" v-model="regi_username" :rules="requireRule" required></v-text-field>
+                  <v-text-field label="Nickname" v-model="regi_nickname" :rules="requireRule" required></v-text-field>
+                  <v-text-field label="Password" v-model="regi_password" :rules="requireRule" required type="password"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                <v-btn color="primary" flat @click.stop="submit_register">Register</v-btn>
+                <v-btn color="primary" flat @click.stop="show_register = false">Login</v-btn>
+                </v-card-actions>
+              </div>
+            </transition>
+          </v-card>
+        </v-dialog>
+
+        <!-- three page -->
+        <v-layout row wrap>
+          <v-flex sm12 offset-sm0 xl8 offset-xl2>
+            <transition name="switch" mode="out-in">
+              <!-- ddl page -->
+              <template v-if="current_page == 0">
+                <v-container class="mt-4">
+                  <v-layout row wrap>
+                    <template v-if="ddls.length == 0">
+                      <div class="headline white--text">You don't have any DDLs now...</div>
+                    </template>
+                    <template v-else v-for="(item, index) in ddls">
+                      <template v-if="item.showToday">
+                        <v-flex xs1>
+                          <div class="headline white--text">Today</div>
+                        </v-flex>
+                        <v-flex xs11>
+                          <div class="today-cell">
+                            <div class="today-circle"></div>
+                            <div class="today-line"></div>
+                          </div>
+                        </v-flex>
+                      </template>
+                      <v-flex xs1>
+                        <div v-if="item.show_time">
+                          <div class="headline white--text">{{item.time.getUTCDate() + 1}}</div>
+                          <div class="headline white--text">{{_getMonth(item.time.getUTCMonth())}}</div>
+                          <div class="caption white--text">{{item.time.getUTCFullYear()}}</div>
+                        </div>
+                      </v-flex>
+                      <v-flex xs11>
+                        <v-card style="margin-bottom: 20px;">
+                          <v-layout row wrap>
+                            <v-flex lg3 sm4 :style="'background-color: ' + item.color + ';'">
+                              <v-card-title class="white--text">
+                                <div class="headline card-head">{{item.title}}</div>
+                                <div>{{item.course_name}}</div>
+                              </v-card-title>
+                            </v-flex>
+                            <v-flex lg9 sm8>
+                              <v-card-title>
+                                <div>{{item.description}}</div>
+                              </v-card-title>
+                              <v-card-actions>
+                                <v-btn flat color="orange" @click="finish_ddl(item.id)">Finish</v-btn>
+                                <v-btn flat color="orange" @click="delete_ddl(item.id)">Remove</v-btn>
+                              </v-card-actions>  
+                            </v-flex>
+                          </v-layout>
+                        </v-card>
+                      </v-flex>
+                    </template>
+                  </v-layout>
+
+                  <!-- add ddl model -->
+                  <v-dialog v-model="add_ddl_dialog" max-width="500px">
+                    <v-card>
+                      <v-card-title>
+                        Add new DDL
+                      </v-card-title>
+                      <v-card-text>
+                        <v-text-field label="Title" v-model="add_title" :rules="requireRule" required></v-text-field>
+                        <v-text-field label="Description" v-model="add_description" :rules="requireRule" required></v-text-field>
+                        <div class="subheading mb-2">Select a date:</div>
+                        <v-date-picker v-model="add_date"></v-date-picker>
+                      </v-card-text>
+                      <v-card-actions>
+                      <v-btn color="primary" flat @click.stop="add_ddl">Add</v-btn>
+                      <v-btn color="primary" flat @click.stop="add_ddl_dialog = false">Cancel</v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
+
+                </v-container>
+              </template>
+              <template v-else-if="current_page == 1">
+                <div class="ml-4 mt-4 headline white--text">Developing...</div>
+              </template>
+              <template v-else-if="current_page == 2">
+                <div class="ml-4 mt-4 headline white--text">Developing...</div>
+              </template>
+            </transition>
+          </v-flex>
+        </v-layout>
+
+        <v-snackbar
+          :timeout="4000"
+          buttom
+          v-model="snackbar"
+          >{{snackbar_text}}</v-snackbar>
+
+        <v-btn :class="'fab-add'"
+          color="blue darken-2"
+          dark
+          fab
+          hover
+          @click.finish="add_ddl_dialog = true"
+          ><v-icon>add</v-icon></v-btn>
+      </v-content>
+    </v-app>
+  </div>
+
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+  <script src="js/ddl.js"></script>
+</body>
+</html>
