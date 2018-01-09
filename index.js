@@ -46,6 +46,31 @@ function responseError(res, err) {
     });
 }
 
+/* COURSE */
+app.get('/api/course', (req, res) => {
+    console.log('GET /api/course', req.query);
+    const q = `
+        SELECT course.* FROM course
+        LEFT JOIN user_course ON user_course.course_id = course.id
+        WHERE user_course.user_id = (SELECT id FROM user WHERE token = ?)
+    `;
+    const data = [req.query.token];
+    connection.query(q, data, (err, result) => {
+        if (err) {
+            responseError(res, err);
+            return;
+        }
+        res.json({
+            courses: result.map(r => ({
+                id: r.id,
+                name: r.name,
+                semester: r.semester,
+                teacher: r.teacher
+            }))
+        });
+    });
+});
+
 /* DEADLINE */
 app.get('/api/deadline', (req, res) => {
     console.log('GET /api/deadline', req.query);
