@@ -1,6 +1,6 @@
 'use strict';
 
-/* global admin_token */
+/* global admin_token, md5 */
 
 $('.ui.tabular.menu .item').tab();
 $('.ui.dropdown').dropdown();
@@ -24,6 +24,7 @@ function load(type, keys, api_name = type) {
         $.get(`/api/admin/${api_name}`, { admin_token }, (data) => {
             let el = '';
             data[`${type}s`].forEach(d => {
+                d.password = md5(d.password);
                 let cells = keys.map(k => `<td>${d[k]}</td>`).join('');
                 cells += `<td>${del(type, d.id)}</td>`;
                 el += `<tr>${cells}</tr>`;
