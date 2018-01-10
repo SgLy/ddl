@@ -104,4 +104,23 @@ $('#add_user_course').on('click', () => {
     $.post(`/api/admin/course/${course_id}/user/${user_id}`, { admin_token }, reload.userCourse);
 });
 
+let fileReader = new FileReader();
+fileReader.onload = () => { batchImportUserCourse(fileReader.result); };
+$('#import_user_course').on('click', function() {
+    $('#fileupload').trigger('click');
+});
+$('#fileupload').on('change', function() {
+    fileReader.readAsText($('#fileupload')[0].files[0]);
+});
+function batchImportUserCourse(csv) {
+    let stuids = [];
+    csv.split('\n').forEach((r, i) => {
+        if (r === '' || i === 0)
+            return;
+        stuids.push(r.split(',')[0]);
+    });
+    const course_id = $('#user_course_course_id').val();
+    $.post(`/api/admin/course/${course_id}/user/-1`, { admin_token, stuids }, reload.userCourse);
+}
+
 $(reload.course);
