@@ -493,7 +493,7 @@ app.post('/api/admin/course/:cid/user/:uid', (req, res) => {
             SELECT user.id, ? as course_id FROM user
             WHERE ${Array(req.body.stuids.length).fill('user.stuid = ?').join(' OR ')}
         `;
-        const data = [req.params.cid, ...req.body.stuids];
+        const data = [req.params.cid].concat(req.body.stuids);
         connection.query(q, data, (err, result) => {
             if (err) {
                 responseError(res, err);
