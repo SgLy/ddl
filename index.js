@@ -61,6 +61,8 @@ app.get('/api/course', (req, res) => {
             return;
         }
         res.json({
+            status: 1,
+            reason: 'Success',
             courses: result.map(r => ({
                 id: r.id,
                 name: r.name,
@@ -470,20 +472,40 @@ app.post('/api/admin/course/:cid/user/:uid', (req, res) => {
         res.json({ status: -1, reason: 'Admin required' });
         return;
     }
-    const q = 'INSERT INTO user_course (user_id, course_id) VALUES (?, ?)';
-    const data = [req.params.uid, req.params.cid];
-    connection.query(q, data, (err, result) => {
-        if (err) {
-            responseError(res, err);
-            return;
-        }
-        if (result.affectedRows === 1) {
+    if (req.params.uid > 0) {
+        const q = 'INSERT INTO user_course (user_id, course_id) VALUES (?, ?)';
+        const data = [req.params.uid, req.params.cid];
+        connection.query(q, data, (err, result) => {
+            if (err) {
+                responseError(res, err);
+                return;
+            }
+            if (result.affectedRows === 1) {
+                res.json({
+                    id: result.insertId
+                });
+            } else
+                responseError(res, 'Error');
+        });
+    } else {
+        const q = `
+            INSERT INTO user_course (user_id, course_id)
+            SELECT user.id, ? as course_id FROM user
+            WHERE ${Array(req.body.stuids.length).fill('user.stuid = ?').join(' OR ')}
+        `;
+        const data = [req.params.cid, ...req.body.stuids];
+        connection.query(q, data, (err, result) => {
+            if (err) {
+                responseError(res, err);
+                return;
+            }
             res.json({
-                id: result.insertId
+                status: 1,
+                reason: 'Success',
+                affectedRows: result.affectedRows
             });
-        } else
-            responseError(res, 'Error');
-    });
+        });
+    }
 });
 /* Admin get all apis */
 app.get('/api/admin/user', (req, res) => {
@@ -648,7 +670,7 @@ app.get('/ddl', (req, res) => {
 let admin_token = uuid();
 app.get('/admin', (req, res) => {
     console.log('GET /api/chat/', req.query.password);
-    if (req.query.password == "ddl.NB.sgly")
+    if (req.query.password === 'ddl.NB.sgly')
         res.render('admin', { admin_token });
     else
         res.send('Password Error');
